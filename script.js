@@ -1,4 +1,3 @@
-
 /* ═══════════════════════════════════════════════════════════════════════════
    SPLASH SCREEN LOGIC
    ══════════════════════════════════════════════════════════════════════════ */
@@ -80,6 +79,7 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
 /* ═══════════════════════════════════════════════════════════════════════════
    IUB ASSISTANT — Main JavaScript
    ══════════════════════════════════════════════════════════════════════════ */
@@ -125,33 +125,34 @@ let modelCandidates = [];
 let history = [];   // [{role, content}]
 let busy = false;
 
-async function loadConfig() {
-    const env = await fetchEnv();
-    const envApiKey = env.OPEN_ROUTER_API_KEY;
-
-    apiKey = envApiKey || '';
-    
-    // Use ONLY default models - ignore env file models
-    modelCandidates = [...DEFAULT_MODELS];
-    model = localStorage.getItem(LS_MDL) || modelCandidates[0];
-    
-    // Make sure the saved model is in our list
-    if (!modelCandidates.includes(model)) {
-        model = modelCandidates[0];
-        localStorage.removeItem('iub_model');
-    }
-    
-    console.log('Config loaded - API Key:', apiKey ? 'Yes' : 'No', 'Model:', model);
-}
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONFIGURATION - UPDATED FOR VERCEL
+   ══════════════════════════════════════════════════════════════════════════ */
 
 async function fetchEnv() {
     const env = {};
+    
+    // Try Vercel API endpoint first
+    try {
+        const response = await fetch('/api/config', { cache: 'no-store' });
+        if (response.ok) {
+            const data = await response.json();
+            console.log('✅ Config loaded from Vercel API');
+            return data;
+        }
+    } catch (err) {
+        console.log('Vercel API not available, trying local env.txt');
+    }
+    
+    // Fallback to env.txt for local development
     try {
         const response = await fetch('/env.txt', { cache: 'no-store' });
         if (!response.ok) return env;
         const text = await response.text();
+        console.log('✅ Config loaded from env.txt');
         return parseEnv(text);
     } catch (err) {
+        console.error('❌ Failed to load config from both sources');
         return env;
     }
 }
@@ -172,6 +173,34 @@ function parseEnv(text) {
         env[key] = value;
     }
     return env;
+}
+
+async function loadConfig() {
+    console.log('🔄 Loading configuration...');
+    const env = await fetchEnv();
+    
+    // Get API key
+    apiKey = env.OPEN_ROUTER_API_KEY || '';
+    console.log('🔑 API Key present:', !!apiKey, apiKey ? '(length: ' + apiKey.length + ')' : '');
+    
+    if (!apiKey) {
+        console.error('❌ No API key found! Check Vercel environment variables or env.txt');
+    }
+    
+    // Use only default models
+    modelCandidates = [...DEFAULT_MODELS];
+    
+    // Check for saved model
+    const savedModel = localStorage.getItem(LS_MDL);
+    if (savedModel && modelCandidates.includes(savedModel)) {
+        model = savedModel;
+    } else {
+        model = modelCandidates[0];
+        localStorage.removeItem(LS_MDL);
+    }
+    
+    console.log('🤖 Using model:', model);
+    console.log('📋 Available models:', modelCandidates.length);
 }
 
 function buildModelCandidates(envModels, envModel) {
@@ -213,6 +242,8 @@ const $scroll = document.getElementById('chatScroll');
 
 /* ── Init ──────────────────────────────────────────────────────────────── */
 function init() {
+    console.log('🚀 Initializing IUB Assistant...');
+    
     // Auto-resize textarea
     $input.addEventListener('input', autoResize);
     $input.addEventListener('keydown', function (e) {
@@ -226,7 +257,10 @@ function init() {
     $sendBtn.addEventListener('click', handleSend);
 
     if (!apiKey) {
-        toast('⚠️ API key not configured. Please set OPEN_ROUTER_API_KEY in .env file');
+        console.error('⚠️ API key not configured!');
+        toast('⚠️ API key not configured. Please set OPEN_ROUTER_API_KEY in Vercel environment variables.');
+    } else {
+        console.log('✅ IUB Assistant ready!');
     }
 }
 
@@ -245,12 +279,22 @@ function useSuggestion(text) {
 
 /* ── Send flow ─────────────────────────────────────────────────────────── */
 function handleSend() {
+    console.log('📤 Send button clicked');
+    
     const text = $input.value.trim();
-    if (!text || busy) return;
+    console.log('💬 Input:', text);
+    console.log('🔒 Busy:', busy);
+    console.log('🔑 API Key exists:', !!apiKey);
+    
+    if (!text || busy) {
+        console.log('⛔ Blocked:', !text ? 'No text' : 'Busy');
+        return;
+    }
 
     // Prompt for API key if missing
     if (!apiKey) {
-        toast('❌ API key not configured. Set OPEN_ROUTER_API_KEY in .env');
+        console.error('❌ API key missing!');
+        toast('❌ API key not configured. Please add OPEN_ROUTER_API_KEY to Vercel environment variables.');
         return;
     }
 
@@ -270,6 +314,7 @@ function handleSend() {
     if (history.length > MAX_HISTORY) history = history.slice(-MAX_HISTORY);
 
     // Call API
+    console.log('🚀 Calling OpenRouter API...');
     callOpenRouter();
 }
 
@@ -334,6 +379,10 @@ function scrollBottom() {
 
 /* ── OpenRouter API call (streaming) ───────────────────────────────────── */
 async function callOpenRouter() {
+    console.log('📡 Starting API call...');
+    console.log('🔑 API key length:', apiKey.length);
+    console.log('🤖 Model:', model);
+    
     busy = true;
     $sendBtn.disabled = true;
 
@@ -344,6 +393,8 @@ async function callOpenRouter() {
 
     for (let i = 0; i < candidates.length; i++) {
         usedModel = candidates[i];
+        console.log(`🔄 Trying model ${i + 1}/${candidates.length}: ${usedModel}`);
+        
         try {
             const payload = {
                 model: usedModel,
@@ -367,6 +418,8 @@ async function callOpenRouter() {
                 body: JSON.stringify(payload)
             });
 
+            console.log('📡 Response status:', resp.status);
+
             if (!resp.ok) {
                 let msg = `Request failed(${resp.status})`;
                 let errorText = '';
@@ -378,6 +431,8 @@ async function callOpenRouter() {
                     errorText = await resp.text().catch(() => '');
                 }
 
+                console.error('❌ API Error:', msg);
+
                 const fallback = shouldFallback(resp.status, errorText);
                 lastError = { status: resp.status, message: msg };
                 if (fallback && i < candidates.length - 1) {
@@ -386,7 +441,7 @@ async function callOpenRouter() {
                 }
 
                 if (resp.status === 401 || resp.status === 403) {
-                    msg = 'Invalid API key. Check your .env configuration.';
+                    msg = 'Invalid API key. Check your Vercel environment variables.';
                 } else if (resp.status === 429) {
                     msg = 'Rate limit reached. Please wait a moment and try again.';
                 } else if (resp.status >= 500) {
@@ -395,6 +450,8 @@ async function callOpenRouter() {
 
                 removeTyping();
                 appendBubble('bot', msg, true);
+                $sendBtn.disabled = false;
+                busy = false;
                 return;
             }
 
@@ -414,6 +471,8 @@ async function callOpenRouter() {
             let fullText = '';
             let buffer = '';
             let firstChunk = true;
+
+            console.log('📖 Reading stream...');
 
             while (true) {
                 const { done, value } = await reader.read();
@@ -439,6 +498,7 @@ async function callOpenRouter() {
                                 removeTyping();
                                 botBubble.style.display = ''; // Show bubble
                                 firstChunk = false;
+                                console.log('✅ First response received');
                             }
                             
                             fullText += delta;
@@ -453,10 +513,12 @@ async function callOpenRouter() {
 
             // Handle case where no content was received
             if (fullText) {
+                console.log('✅ Response complete, length:', fullText.length);
                 botBubble.innerHTML = renderMarkdown(fullText);
                 history.push({ role: 'assistant', content: fullText });
                 if (history.length > MAX_HISTORY) history = history.slice(-MAX_HISTORY);
             } else {
+                console.warn('⚠️ No content received');
                 removeTyping();
                 botBubble.innerHTML = "I didn't receive a response. Please try again.";
                 botBubble.style.display = ''; // Show error message
@@ -465,6 +527,7 @@ async function callOpenRouter() {
             if (usedModel !== model) {
                 model = usedModel;
                 localStorage.setItem(LS_MDL, model);
+                console.log('💾 Model saved:', model);
             }
 
             scrollBottom();
@@ -473,6 +536,7 @@ async function callOpenRouter() {
             return;
 
         } catch (err) {
+            console.error('❌ Network error:', err);
             lastError = err;
             if (i < candidates.length - 1) {
                 toast(`Network or limit issue on ${usedModel}. Switching to next model...`);
@@ -498,6 +562,7 @@ async function callOpenRouter() {
     }
 
     if (lastError) {
+        console.error('❌ All models failed');
         removeTyping();
         appendBubble('bot', typeof lastError === 'string' ? lastError : (lastError.message || 'Unable to complete the request.'), true);
     }
