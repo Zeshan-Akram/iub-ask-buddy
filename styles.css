@@ -44,7 +44,7 @@ html,
 body {
     height: 100%;
     font-family: var(--font);
-    background: linear-gradient(135deg, #e8e4d5 0%, #f0ece0 50%, #e6e1d2 100%);
+    background: linear-gradient(135deg, #e0dcd0 0%, #e8e4d5 30%, #f0ece0 60%, #e6e1d2 100%);
     color: var(--text-dark);
     -webkit-font-smoothing: antialiased;
     overflow: hidden;
@@ -54,17 +54,36 @@ body {
     padding: 0;
 }
 
+/* Add a subtle pattern overlay on desktop */
+@media (min-width: 901px) {
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 50%, rgba(43, 125, 101, 0.03) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(28, 61, 40, 0.03) 0%, transparent 50%),
+            radial-gradient(circle at 50% 80%, rgba(126, 144, 32, 0.03) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: -1;
+    }
+}
+
 /* ── App Shell ─────────────────────────────────────────────────────── */
 .app {
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: 900px;
-    height: 100vh;
-    height: 100dvh;
+    max-width: 1000px;
+    height: 95vh;
+    height: 95dvh;
     margin: 0 auto;
     background: var(--cream);
-    box-shadow: var(--shadow-xl);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);  /* Just a subtle border */
+    border-radius: 20px;
     position: relative;
     overflow: hidden;
 }
@@ -81,10 +100,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 22px;
+    padding: 0 24px;
     position: relative;
     z-index: 20;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+    border-radius: 20px 20px 0 0;
 }
 
 .hdr-left {
@@ -177,7 +197,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 48px 20px 32px;
+    padding: 60px 40px 40px;
 }
 
 .welcome.hidden {
@@ -185,26 +205,27 @@ body {
 }
 
 .welcome-title {
-    font-size: 27px;
+    font-size: 32px;
     font-weight: 800;
     color: var(--text-dark);
     letter-spacing: -0.5px;
-    margin-bottom: 9px;
+    margin-bottom: 12px;
 }
 
 .welcome-sub {
-    font-size: 14.5px;
+    font-size: 16px;
     color: var(--text-muted);
     font-weight: 400;
-    margin-bottom: 36px;
+    margin-bottom: 48px;
     text-align: center;
+    max-width: 500px;
 }
 
 .suggestions {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 11px;
-    max-width: 680px;
+    gap: 14px;
+    max-width: 700px;
     width: 100%;
 }
 
@@ -212,14 +233,14 @@ body {
     background: var(--white);
     border: 1.5px solid var(--border);
     border-radius: var(--r-md);
-    padding: 17px 18px;
+    padding: 20px 24px;
     font-family: var(--font);
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 500;
     color: var(--text-body);
     cursor: pointer;
     text-align: center;
-    line-height: 1.45;
+    line-height: 1.5;
     transition: border-color 0.18s, color 0.18s, box-shadow 0.18s, transform 0.15s;
     box-shadow: var(--shadow-sm);
 }
@@ -239,8 +260,8 @@ body {
 .messages {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding: 22px 0 8px;
+    gap: 8px;
+    padding: 24px 0 12px;
     flex: 1;
 }
 
@@ -250,7 +271,7 @@ body {
 
 .msg-row {
     display: flex;
-    padding: 3px 20px;
+    padding: 4px 24px;
     animation: msgIn 0.22s ease;
 }
 
@@ -275,11 +296,11 @@ body {
 }
 
 .bubble {
-    max-width: 74%;
-    padding: 11px 15px;
+    max-width: 70%;
+    padding: 12px 18px;
     border-radius: var(--r-md);
-    font-size: 13.8px;
-    line-height: 1.65;
+    font-size: 14px;
+    line-height: 1.7;
     word-break: break-word;
 }
 
@@ -376,7 +397,7 @@ body {
 .input-bar {
     flex-shrink: 0;
     background: var(--cream);
-    padding: 12px 18px 10px;
+    padding: 16px 24px 12px;
     border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
@@ -386,7 +407,7 @@ body {
     background: var(--white);
     border: 1.5px solid var(--border);
     border-radius: var(--r-full);
-    padding: 8px 8px 8px 20px;
+    padding: 10px 10px 10px 24px;
     max-width: 100%;
     margin: 0 auto;
     box-shadow: var(--shadow-sm);
@@ -403,7 +424,7 @@ body {
     border: none;
     outline: none;
     font-family: var(--font);
-    font-size: 14px;
+    font-size: 14.5px;
     color: var(--text-dark);
     background: transparent;
     resize: none;
@@ -419,8 +440,8 @@ body {
 
 .send-btn {
     flex-shrink: 0;
-    width: 38px;
-    height: 38px;
+    width: 42px;
+    height: 42px;
     background: var(--teal);
     border: none;
     border-radius: 50%;
@@ -428,7 +449,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: 8px;
+    margin-left: 10px;
     transition: background 0.18s, transform 0.14s, opacity 0.18s;
 }
 
@@ -443,15 +464,15 @@ body {
 }
 
 .send-btn svg {
-    width: 15px;
-    height: 15px;
+    width: 17px;
+    height: 17px;
     stroke: #fff;
 }
 
 .input-footer {
     text-align: center;
-    margin-top: 7px;
-    font-size: 11.5px;
+    margin-top: 8px;
+    font-size: 12px;
     color: var(--text-muted);
 }
 
@@ -513,56 +534,6 @@ body {
 @keyframes blink {
     0%, 100% { opacity: 0.6; }
     50%       { opacity: 0; }
-}
-
-/* ── Responsive ─────────────────────────────────────────────────────── */
-@media (max-width: 900px) {
-    .app {
-        max-width: 100%;
-        height: 100vh;
-        height: 100dvh;
-        box-shadow: none;
-    }
-    
-    body {
-        padding: 0;
-    }
-}
-
-@media (max-width: 600px) {
-    .suggestions {
-        grid-template-columns: 1fr;
-    }
-
-    .hdr-text p {
-        display: none;
-    }
-
-    .ai-badge {
-        display: none;
-    }
-
-    .bubble {
-        max-width: 86%;
-    }
-
-    .input-bar {
-        padding: 10px 14px 8px;
-    }
-
-    .welcome {
-        padding: 32px 16px 24px;
-    }
-
-    .welcome-title {
-        font-size: 22px;
-    }
-}
-
-@media (max-width: 400px) {
-    .msg-row {
-        padding: 3px 12px;
-    }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -777,5 +748,222 @@ body {
     100% {
         transform: translateY(-100px) scale(1);
         opacity: 0;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Large Desktop (1200px+) */
+@media (min-width: 1200px) {
+    .app {
+        max-width: 1100px;
+        height: 92vh;
+        height: 92dvh;
+    }
+    
+    .bubble {
+        max-width: 65%;
+    }
+    
+    .welcome {
+        padding: 80px 60px 60px;
+    }
+    
+    .welcome-title {
+        font-size: 36px;
+    }
+    
+    .welcome-sub {
+        font-size: 17px;
+    }
+    
+    .suggestions {
+        max-width: 800px;
+    }
+    
+    .sug-btn {
+        padding: 24px 28px;
+        font-size: 15px;
+    }
+}
+
+/* Tablet Landscape / Small Desktop (901px - 1024px) */
+@media (min-width: 901px) and (max-width: 1024px) {
+    .app {
+        max-width: 95%;
+        height: 95vh;
+        height: 95dvh;
+    }
+    
+    .bubble {
+        max-width: 72%;
+    }
+}
+
+/* Tablet / Mobile Landscape (max-width: 900px) */
+@media (max-width: 900px) {
+    html, body {
+        padding: 0;
+    }
+    
+    body::before {
+        display: none;
+    }
+    
+    .app {
+        max-width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        border-radius: 0;
+        box-shadow: none;
+    }
+    
+    .header {
+        border-radius: 0;
+        padding: 0 20px;
+    }
+    
+    .welcome {
+        padding: 48px 20px 32px;
+    }
+    
+    .welcome-title {
+        font-size: 27px;
+    }
+    
+    .welcome-sub {
+        font-size: 14.5px;
+        margin-bottom: 36px;
+    }
+    
+    .suggestions {
+        gap: 11px;
+        max-width: 680px;
+    }
+    
+    .sug-btn {
+        padding: 17px 18px;
+        font-size: 13.5px;
+    }
+    
+    .messages {
+        gap: 6px;
+        padding: 22px 0 8px;
+    }
+    
+    .msg-row {
+        padding: 3px 20px;
+    }
+    
+    .bubble {
+        max-width: 74%;
+        padding: 11px 15px;
+        font-size: 13.8px;
+    }
+    
+    .input-bar {
+        padding: 12px 18px 10px;
+    }
+    
+    .input-wrap {
+        padding: 8px 8px 8px 20px;
+    }
+    
+    #chatInput {
+        font-size: 14px;
+    }
+    
+    .send-btn {
+        width: 38px;
+        height: 38px;
+    }
+    
+    .send-btn svg {
+        width: 15px;
+        height: 15px;
+    }
+    
+    .input-footer {
+        font-size: 11.5px;
+    }
+}
+
+/* Mobile (max-width: 600px) */
+@media (max-width: 600px) {
+    .suggestions {
+        grid-template-columns: 1fr;
+    }
+
+    .hdr-text p {
+        display: none;
+    }
+
+    .ai-badge {
+        display: none;
+    }
+
+    .bubble {
+        max-width: 86%;
+    }
+
+    .input-bar {
+        padding: 10px 14px 8px;
+    }
+
+    .welcome {
+        padding: 32px 16px 24px;
+    }
+
+    .welcome-title {
+        font-size: 22px;
+    }
+    
+    .welcome-sub {
+        font-size: 13.5px;
+        margin-bottom: 28px;
+    }
+    
+    .sug-btn {
+        padding: 15px 16px;
+        font-size: 13px;
+    }
+    
+    .header {
+        padding: 0 16px;
+    }
+    
+    .msg-row {
+        padding: 3px 14px;
+    }
+}
+
+/* Small Mobile (max-width: 400px) */
+@media (max-width: 400px) {
+    .msg-row {
+        padding: 3px 10px;
+    }
+    
+    .welcome {
+        padding: 24px 12px 20px;
+    }
+    
+    .welcome-title {
+        font-size: 20px;
+    }
+    
+    .welcome-sub {
+        font-size: 13px;
+    }
+    
+    .sug-btn {
+        padding: 14px 14px;
+        font-size: 12.5px;
+    }
+    
+    .bubble {
+        max-width: 90%;
+        font-size: 13px;
     }
 }
