@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IUB Assistant — Islamia University of Bahawalpur</title>
+    <meta name="description"
+        content="AI-powered assistant for Islamia University of Bahawalpur. Get answers about admissions, programs, campuses, and student life." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- SPLASH SCREEN -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div class="splash" id="splash">
+        <div class="splash-content">
+            <div class="splash-logo">
+                <!-- IUB Logo SVG - You can replace this with your actual IUB logo image -->
+                <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Outer circle -->
+                    <circle cx="60" cy="60" r="55" stroke="white" stroke-width="2.5" fill="none"
+                        class="splash-circle" />
+                    <!-- Inner circle -->
+                    <circle cx="60" cy="60" r="45" stroke="white" stroke-width="1.5" fill="none"
+                        class="splash-circle-inner" opacity="0.7" />
+                    <!-- Book/Knowledge icon -->
+                    <path d="M40 35h40v50H40z" stroke="white" stroke-width="2.5" fill="none" />
+                    <line x1="60" y1="35" x2="60" y2="85" stroke="white" stroke-width="2" />
+                    <line x1="45" y1="45" x2="55" y2="45" stroke="white" stroke-width="1.5" opacity="0.7" />
+                    <line x1="45" y1="52" x2="55" y2="52" stroke="white" stroke-width="1.5" opacity="0.7" />
+                    <line x1="45" y1="59" x2="55" y2="59" stroke="white" stroke-width="1.5" opacity="0.7" />
+                    <line x1="65" y1="45" x2="75" y2="45" stroke="white" stroke-width="1.5" opacity="0.7" />
+                    <line x1="65" y1="52" x2="75" y2="52" stroke="white" stroke-width="1.5" opacity="0.7" />
+                    <line x1="65" y1="59" x2="75" y2="59" stroke="white" stroke-width="1.5" opacity="0.7" />
+                    <!-- Star/Sparkle -->
+                    <path d="M60 18l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" fill="white" class="splash-star" opacity="0.8" />
+                </svg>
+            </div>
+            <div class="splash-title">
+                <span class="splash-iub">IUB</span>
+                <span class="splash-assistant">Assistant</span>
+            </div>
+            <div class="splash-loader">
+                <div class="splash-loader-bar"></div>
+            </div>
+            <p class="splash-tagline">The Islamia University of Bahawalpur</p>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- MAIN APP (Hidden during splash) -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div class="app" id="app" style="display: none;">
+
+        <!-- ── Header ─────────────────────────────────────────────────────────── -->
+        <header class="header">
+            <div class="hdr-left">
+                <div class="hdr-icon">🎓</div>
+                <div class="hdr-text">
+                    <h1>IUB Assistant</h1>
+                    <p>Islamia University of Bahawalpur — admissions, academics &amp; student life</p>
+                </div>
+            </div>
+            <div class="hdr-right">
+                <div class="ai-badge">✨ AI powered</div>
+            </div>
+        </header>
+
+        <!-- ── Chat Scroll Area ────────────────────────────────────────────────── -->
+        <div class="chat-scroll" id="chatScroll">
+
+            <!-- Welcome screen -->
+            <div class="welcome" id="welcome">
+                <h2 class="welcome-title">Assalam-o-Alaikum 👋</h2>
+                <p class="welcome-sub">Ask me anything about The Islamia University of Bahawalpur.</p>
+                <div class="suggestions">
+                    <button class="sug-btn" onclick="useSuggestion(this.textContent.trim())">
+                        How do I apply for undergraduate admission at IUB?
+                    </button>
+                    <button class="sug-btn" onclick="useSuggestion(this.textContent.trim())">
+                        Tell me about the main campuses of IUB.
+                    </button>
+                    <button class="sug-btn" onclick="useSuggestion(this.textContent.trim())">
+                        What programs does the Faculty of Computing offer?
+                    </button>
+                    <button class="sug-btn" onclick="useSuggestion(this.textContent.trim())">
+                        How can I check my IUB result and transcript?
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div class="messages hidden" id="messages"></div>
+
+        </div>
+
+        <!-- ── Input Bar ───────────────────────────────────────────────────────── -->
+        <div class="input-bar">
+            <div class="input-wrap">
+                <textarea id="chatInput" placeholder="Ask about admissions, programs, campuses..." rows="1"
+                    autocomplete="off" spellcheck="true"></textarea>
+                <button class="send-btn" id="sendBtn" title="Send message">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2" fill="white" stroke="none"></polygon>
+                    </svg>
+                </button>
+            </div>
+            <div class="input-footer">
+                Unofficial assistant. Verify critical info on
+                <a href="https://iub.edu.pk" target="_blank" rel="noopener noreferrer">iub.edu.pk</a>.
+            </div>
+        </div>
+
+    </div><!-- /.app -->
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
